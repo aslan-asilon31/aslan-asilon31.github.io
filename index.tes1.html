@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>AslanAsilon — Web Developer Portfolio</title>
+
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="Portfolio AslanAsilon - Web Developer & Japanese Literature Student. Laravel, React, Python, dan modern web apps."
+    />
+    <meta
+      name="keywords"
+      content="web developer, portfolio, laravel, react, python, indonesia developer"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Outfit", sans-serif;
+        background: linear-gradient(135deg, #1a0038, #4a00a0, #7c3aed);
+        color: white;
+      }
+
+      /* Tambahan hover halus */
+      .port-card {
+        transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .port-card:hover {
+        transform: translateY(-8px) scale(1.02);
+      }
+
+      /* Active nav */
+      .nav-link.active {
+        color: white;
+        background: rgba(255, 255, 255, 0.12);
+      }
+    </style>
+  </head>
+
+  <body x-data="app()" x-init="init()">
+    <header
+      class="fixed w-full top-0 z-50 backdrop-blur-xl bg-black/30 border-b border-white/10"
+    >
+      <div
+        class="max-w-6xl mx-auto flex justify-between items-center px-6 py-4"
+      >
+        <div class="font-black text-lg">AslanAsilon</div>
+
+        <nav class="flex gap-2">
+          <a
+            href="#portfolio"
+            class="nav-link px-3 py-1 rounded-full"
+            :class="{active:activeSection==='portfolio'}"
+            >Portfolio</a
+          >
+          <a
+            href="#education"
+            class="nav-link px-3 py-1 rounded-full"
+            :class="{active:activeSection==='education'}"
+            >Education</a
+          >
+          <a
+            href="#skills"
+            class="nav-link px-3 py-1 rounded-full"
+            :class="{active:activeSection==='skills'}"
+            >Skills</a
+          >
+          <a
+            href="#contact"
+            class="nav-link px-3 py-1 rounded-full"
+            :class="{active:activeSection==='contact'}"
+            >Contact</a
+          >
+        </nav>
+
+        <div class="flex gap-1 bg-white/10 rounded-full p-1">
+          <button @click="setLang('id')" :class="btnLang('id')">ID</button>
+          <button @click="setLang('en')" :class="btnLang('en')">EN</button>
+          <button @click="setLang('ja')" :class="btnLang('ja')">JP</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="pt-32 max-w-6xl mx-auto px-6">
+      <h1 class="text-5xl font-black leading-tight">
+        Aslan <br />
+        <span class="text-purple-300">Asilon</span>
+      </h1>
+
+      <p class="mt-4 text-white/70 max-w-xl">
+        Web Developer yang fokus pada Laravel, React, dan Python. Menggabungkan
+        teknologi dengan studi bahasa Jepang.
+      </p>
+    </section>
+
+    <!-- PORTFOLIO -->
+    <section id="portfolio" class="max-w-6xl mx-auto px-6 mt-20">
+      <h2 class="text-2xl font-bold mb-6">Portfolio</h2>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <template x-for="item in portfolios" :key="item.id">
+          <div
+            class="port-card bg-white/10 p-5 rounded-xl border border-white/20"
+          >
+            <div class="text-3xl mb-3" x-text="item.icon"></div>
+
+            <div class="font-bold text-lg" x-text="item.name"></div>
+            <p class="text-white/60 text-sm mt-1" x-text="item.desc"></p>
+
+            <div class="flex justify-between items-center mt-4">
+              <span class="text-xs text-white/40" x-text="item.year"></span>
+
+              <a
+                :href="item.url"
+                target="_blank"
+                class="text-purple-300 font-semibold hover:underline"
+              >
+                View →
+              </a>
+            </div>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="max-w-4xl mx-auto px-6 mt-20 text-center">
+      <h2 class="text-2xl font-bold">Contact</h2>
+
+      <p class="text-white/60 mt-3">Tertarik bekerja sama? Hubungi saya.</p>
+
+      <div class="flex justify-center gap-3 mt-6 flex-wrap">
+        <a
+          href="mailto:aslan@example.com"
+          class="bg-purple-500 px-5 py-2 rounded-lg font-semibold"
+          >Email</a
+        >
+        <a
+          href="https://github.com/"
+          target="_blank"
+          class="bg-white/10 px-5 py-2 rounded-lg"
+          >GitHub</a
+        >
+        <a
+          href="https://linkedin.com/"
+          target="_blank"
+          class="bg-white/10 px-5 py-2 rounded-lg"
+          >LinkedIn</a
+        >
+      </div>
+    </section>
+
+    <script>
+      function app() {
+        return {
+          lang: "id",
+          activeSection: "portfolio",
+
+          portfolios: [
+            {
+              id: 1,
+              icon: "🛒",
+              name: "E-Commerce Platform",
+              desc: "Multi-vendor marketplace dengan Laravel.",
+              year: "2024",
+              url: "#",
+            },
+            {
+              id: 2,
+              icon: "📊",
+              name: "Analytics Dashboard",
+              desc: "Dashboard real-time Python.",
+              year: "2024",
+              url: "#",
+            },
+          ],
+
+          setLang(l) {
+            this.lang = l;
+            localStorage.setItem("lang", l);
+          },
+
+          btnLang(l) {
+            return this.lang === l
+              ? "bg-purple-500 text-white px-3 py-1 rounded-full"
+              : "px-3 py-1 text-white/60";
+          },
+
+          init() {
+            this.lang = localStorage.getItem("lang") || "id";
+
+            // scroll spy
+            window.addEventListener("scroll", () => {
+              const sections = ["portfolio", "education", "skills", "contact"];
+              sections.forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) {
+                  const top = el.offsetTop - 100;
+                  if (scrollY >= top) this.activeSection = id;
+                }
+              });
+            });
+          },
+        };
+      }
+    </script>
+  </body>
+</html>

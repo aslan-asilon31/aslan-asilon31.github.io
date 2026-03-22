@@ -1,0 +1,1355 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AslanAsilon — Web Developer & Japanese Literature</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+      /* ══════════════════════════════════
+         DESIGN TOKENS
+      ══════════════════════════════════ */
+      :root {
+        --purple-900: #0f0024;
+        --purple-800: #1a0038;
+        --purple-700: #2d0060;
+        --purple-600: #4a00a0;
+        --purple-500: #6b21a8;
+        --purple-400: #8b5cf6;
+        --purple-300: #c4b5fd;
+        --purple-200: #ede9fe;
+        --pink:        #e879f9;
+        --pink-light:  #f0abfc;
+        --indigo:      #818cf8;
+        --glass-xs:    rgba(255,255,255,0.06);
+        --glass-sm:    rgba(255,255,255,0.10);
+        --glass-md:    rgba(255,255,255,0.14);
+        --glass-lg:    rgba(255,255,255,0.20);
+        --border-sm:   rgba(255,255,255,0.12);
+        --border-md:   rgba(255,255,255,0.20);
+        --border-lg:   rgba(255,255,255,0.28);
+        --text-1:      #ffffff;
+        --text-2:      rgba(255,255,255,0.78);
+        --text-3:      rgba(255,255,255,0.52);
+        --text-4:      rgba(255,255,255,0.32);
+        --radius-sm:   10px;
+        --radius-md:   16px;
+        --radius-lg:   24px;
+        --radius-xl:   32px;
+      }
+
+      /* ══════════════════════════════════
+         RESET & BASE
+      ══════════════════════════════════ */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        font-family: 'Outfit', sans-serif;
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse 80% 60% at 20% 10%, rgba(139,92,246,0.18) 0%, transparent 60%),
+          radial-gradient(ellipse 60% 80% at 80% 90%, rgba(232,121,249,0.12) 0%, transparent 60%),
+          linear-gradient(160deg, #0f0024 0%, #1a0038 20%, #2d0060 45%, #4a00a0 70%, #6b21a8 100%);
+        background-attachment: fixed;
+        color: var(--text-1);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .mono { font-family: 'DM Mono', monospace; }
+
+      /* ══════════════════════════════════
+         ANIMATED BACKGROUND ORBS
+      ══════════════════════════════════ */
+      .orb-layer {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(90px);
+        animation: orbFloat ease-in-out infinite;
+        will-change: transform;
+      }
+      .orb-a {
+        width: min(700px, 100vw);
+        height: min(700px, 100vw);
+        background: radial-gradient(circle, rgba(232,121,249,0.22) 0%, transparent 65%);
+        top: -20%; left: -15%;
+        animation-duration: 18s;
+      }
+      .orb-b {
+        width: min(500px, 80vw);
+        height: min(500px, 80vw);
+        background: radial-gradient(circle, rgba(139,92,246,0.28) 0%, transparent 65%);
+        bottom: -15%; right: -10%;
+        animation-duration: 13s;
+        animation-direction: reverse;
+      }
+      .orb-c {
+        width: min(380px, 70vw);
+        height: min(380px, 70vw);
+        background: radial-gradient(circle, rgba(129,140,248,0.18) 0%, transparent 65%);
+        top: 40%; left: 55%;
+        animation-duration: 22s;
+        animation-delay: -5s;
+      }
+      @keyframes orbFloat {
+        0%,100% { transform: translate(0,0) scale(1); }
+        25%      { transform: translate(30px,-50px) scale(1.05); }
+        50%      { transform: translate(-20px, 30px) scale(0.95); }
+        75%      { transform: translate(40px, 20px) scale(1.03); }
+      }
+
+      /* Noise texture overlay */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.6;
+      }
+
+      .page { position: relative; z-index: 1; }
+
+      /* ══════════════════════════════════
+         HEADER / NAV
+      ══════════════════════════════════ */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        background: rgba(15,0,36,0.75);
+        backdrop-filter: blur(28px) saturate(1.4);
+        -webkit-backdrop-filter: blur(28px) saturate(1.4);
+        border-bottom: 1px solid var(--border-sm);
+      }
+
+      .header-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0.85rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      /* Logo */
+      .logo {
+        font-weight: 900;
+        font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+        letter-spacing: -0.04em;
+        background: linear-gradient(135deg, #fff 0%, var(--purple-300) 45%, var(--pink) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      /* Desktop nav */
+      .desktop-nav {
+        display: flex;
+        gap: 0.15rem;
+        align-items: center;
+      }
+      .nav-a {
+        padding: 0.4rem 0.9rem;
+        border-radius: 100px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-3);
+        text-decoration: none;
+        transition: color 0.2s, background 0.2s;
+      }
+      .nav-a:hover { color: var(--text-1); background: var(--glass-sm); }
+
+      /* Language switcher */
+      .lang-switcher {
+        display: flex;
+        gap: 0.15rem;
+        background: rgba(0,0,0,0.3);
+        border: 1px solid var(--border-md);
+        border-radius: 100px;
+        padding: 0.18rem;
+        flex-shrink: 0;
+      }
+      .lang-btn {
+        padding: 0.28rem 0.65rem;
+        border-radius: 100px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        background: transparent;
+        color: var(--text-3);
+        font-family: 'Outfit', sans-serif;
+      }
+      .lang-btn.active {
+        background: linear-gradient(135deg, var(--purple-400), var(--pink));
+        color: #fff;
+        box-shadow: 0 2px 14px rgba(232,121,249,0.45);
+      }
+      .lang-btn:hover:not(.active) { color: var(--text-1); }
+
+      /* Hamburger (mobile) */
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+        padding: 0.4rem;
+        border: 1px solid var(--border-md);
+        border-radius: 10px;
+        background: var(--glass-sm);
+        transition: background 0.2s;
+      }
+      .hamburger:hover { background: var(--glass-md); }
+      .hamburger span {
+        display: block;
+        width: 22px;
+        height: 2px;
+        background: var(--text-2);
+        border-radius: 2px;
+        transition: all 0.3s;
+      }
+      .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .hamburger.open span:nth-child(2) { opacity: 0; }
+      .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      /* Mobile drawer */
+      .mobile-menu {
+        display: none;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 1rem 1.25rem;
+        border-top: 1px solid var(--border-sm);
+        background: rgba(15,0,36,0.9);
+        backdrop-filter: blur(28px);
+      }
+      .mobile-menu.open { display: flex; }
+      .mobile-nav-a {
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-2);
+        text-decoration: none;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+      }
+      .mobile-nav-a:hover {
+        color: var(--text-1);
+        background: var(--glass-sm);
+        border-color: var(--border-sm);
+      }
+      .mobile-lang-row {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+        margin-top: 0.25rem;
+        border-top: 1px solid var(--border-sm);
+      }
+      .mobile-lang-btn {
+        flex: 1;
+        padding: 0.5rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid var(--border-md);
+        background: var(--glass-sm);
+        color: var(--text-3);
+        font-family: 'Outfit', sans-serif;
+        transition: all 0.2s;
+        text-align: center;
+      }
+      .mobile-lang-btn.active {
+        background: linear-gradient(135deg, var(--purple-400), var(--pink));
+        color: #fff;
+        border-color: transparent;
+      }
+
+      /* ══════════════════════════════════
+         HERO
+      ══════════════════════════════════ */
+      .hero {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: clamp(2.5rem, 8vw, 6rem) 1.25rem clamp(2rem, 5vw, 4rem);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: clamp(1.5rem, 4vw, 4rem);
+        align-items: center;
+      }
+
+      .hero-available {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 0.38rem 1rem;
+        border-radius: 100px;
+        background: rgba(232,121,249,0.12);
+        border: 1px solid rgba(232,121,249,0.3);
+        color: var(--pink);
+        margin-bottom: clamp(1rem, 3vw, 1.75rem);
+        width: fit-content;
+      }
+      .blink-dot {
+        width: 7px; height: 7px;
+        background: var(--pink);
+        border-radius: 50%;
+        animation: blink 2.2s ease-in-out infinite;
+        flex-shrink: 0;
+      }
+      @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.15;transform:scale(0.8)} }
+
+      .hero-name {
+        font-size: clamp(3rem, 10vw, 6.5rem);
+        font-weight: 900;
+        line-height: 0.92;
+        letter-spacing: -0.04em;
+        margin-bottom: clamp(0.75rem, 2vw, 1rem);
+      }
+      .hero-name .grad {
+        display: block;
+        background: linear-gradient(135deg, #fff 0%, var(--purple-300) 35%, var(--pink) 75%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-roles {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: clamp(1rem, 3vw, 1.5rem);
+      }
+      .hero-role-text {
+        font-size: clamp(0.85rem, 2vw, 1.05rem);
+        font-weight: 500;
+        color: var(--text-2);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.22rem 0.6rem;
+        border-radius: 100px;
+        background: var(--glass-sm);
+        border: 1px solid var(--border-md);
+        color: var(--purple-300);
+        white-space: nowrap;
+        line-height: 1.4;
+      }
+
+      .hero-desc {
+        max-width: 520px;
+        color: var(--text-2);
+        line-height: 1.78;
+        font-size: clamp(0.88rem, 1.8vw, 1rem);
+        margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+        font-weight: 400;
+      }
+
+      .stat-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: clamp(0.65rem, 2vw, 1.25rem);
+      }
+      .stat-card {
+        background: var(--glass-sm);
+        border: 1px solid var(--border-md);
+        backdrop-filter: blur(16px);
+        border-radius: var(--radius-md);
+        padding: clamp(0.75rem, 2vw, 1.1rem) clamp(1rem, 2.5vw, 1.5rem);
+        text-align: center;
+        transition: transform 0.2s, background 0.2s;
+        cursor: default;
+      }
+      .stat-card:hover { background: var(--glass-md); transform: translateY(-3px); }
+      .stat-n {
+        display: block;
+        font-family: 'DM Mono', monospace;
+        font-size: clamp(1.5rem, 4vw, 2rem);
+        font-weight: 500;
+        background: linear-gradient(135deg, var(--purple-300), var(--pink));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+      }
+      .stat-l {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: var(--text-3);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 0.3rem;
+        display: block;
+      }
+
+      /* Hero Avatar */
+      .hero-avatar-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      .avatar-wrap {
+        position: relative;
+        width: clamp(150px, 20vw, 230px);
+        height: clamp(150px, 20vw, 230px);
+      }
+      .avatar-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(var(--purple-400), var(--pink), var(--indigo), var(--purple-400));
+        padding: 3px;
+        animation: spinRing 8s linear infinite;
+      }
+      @keyframes spinRing { to { transform: rotate(360deg); } }
+      .avatar-ring-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: var(--purple-700);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .avatar-ring-inner::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--purple-700) 0%, var(--purple-500) 100%);
+      }
+      .avatar-initials {
+        position: relative;
+        z-index: 1;
+        font-weight: 900;
+        font-size: clamp(1.8rem, 5vw, 3rem);
+        background: linear-gradient(135deg, #fff, var(--pink));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.05em;
+      }
+      .avatar-glow {
+        position: absolute;
+        inset: -10px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(232,121,249,0.2) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .avatar-badges {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      /* ══════════════════════════════════
+         SECTION WRAPPER
+      ══════════════════════════════════ */
+      .section {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1.25rem clamp(3rem, 6vw, 5rem);
+      }
+
+      .sec-head {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: clamp(1.25rem, 3vw, 2rem);
+        padding-bottom: 1.1rem;
+        border-bottom: 1px solid var(--border-sm);
+      }
+      .sec-title {
+        font-size: clamp(1.2rem, 3.5vw, 1.7rem);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        white-space: nowrap;
+      }
+      .sec-title .ac { color: var(--pink); }
+      .sec-line {
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(232,121,249,0.35), transparent);
+        min-width: 0;
+      }
+
+      /* ══════════════════════════════════
+         FILTER BAR
+      ══════════════════════════════════ */
+      .filter-bar {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .search-wrap {
+        position: relative;
+        width: 100%;
+      }
+      .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        color: var(--text-3);
+        pointer-events: none;
+        flex-shrink: 0;
+      }
+      .search-input {
+        width: 100%;
+        background: var(--glass-sm);
+        border: 1px solid var(--border-md);
+        color: var(--text-1);
+        padding: 0.78rem 1rem 0.78rem 2.75rem;
+        border-radius: var(--radius-sm);
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.9rem;
+        outline: none;
+        transition: all 0.2s;
+        backdrop-filter: blur(10px);
+      }
+      .search-input::placeholder { color: var(--text-4); }
+      .search-input:focus {
+        border-color: rgba(232,121,249,0.55);
+        background: var(--glass-md);
+        box-shadow: 0 0 0 3px rgba(232,121,249,0.12);
+      }
+
+      .cat-scroll {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .cat-btn {
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.77rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid var(--border-md);
+        background: var(--glass-xs);
+        color: var(--text-3);
+        font-family: 'Outfit', sans-serif;
+        backdrop-filter: blur(8px);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .cat-btn:hover { color: var(--text-1); border-color: var(--border-lg); background: var(--glass-sm); }
+      .cat-btn.active {
+        background: linear-gradient(135deg, var(--purple-400), var(--pink));
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 4px 18px rgba(139,92,246,0.4);
+      }
+
+      .results-count {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.73rem;
+        color: var(--text-3);
+        margin-bottom: 1.25rem;
+      }
+      .results-count strong { color: var(--pink); }
+
+      /* ══════════════════════════════════
+         PORTFOLIO GRID
+      ══════════════════════════════════ */
+      .port-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+        gap: clamp(0.85rem, 2vw, 1.25rem);
+      }
+
+      .port-card {
+        background: var(--glass-sm);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        border: 1px solid var(--border-md);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s, box-shadow 0.3s, background 0.3s;
+        animation: cardIn 0.45s ease both;
+        display: flex;
+        flex-direction: column;
+      }
+      @keyframes cardIn {
+        from { opacity: 0; transform: translateY(22px) scale(0.96); }
+        to   { opacity: 1; transform: none; }
+      }
+      .port-card:hover {
+        transform: translateY(-6px) scale(1.015);
+        border-color: rgba(232,121,249,0.45);
+        box-shadow: 0 20px 60px rgba(139,92,246,0.22), 0 0 0 1px rgba(232,121,249,0.18);
+        background: var(--glass-md);
+      }
+
+      .card-thumb {
+        height: clamp(140px, 20vw, 195px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: clamp(2.5rem, 6vw, 3.5rem);
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .card-thumb-emoji {
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 8px 24px rgba(0,0,0,0.5));
+      }
+      .card-thumb::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.28) 100%);
+      }
+
+      .card-body {
+        padding: clamp(1rem, 2.5vw, 1.4rem);
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      .card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-bottom: 0.8rem;
+      }
+      .tag {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.6rem;
+        font-weight: 500;
+        padding: 0.18rem 0.5rem;
+        border-radius: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        line-height: 1.5;
+      }
+      .tag-php        { background: rgba(139,92,246,0.22); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.28); }
+      .tag-python     { background: rgba(250,204,21,0.14); color: #fde047; border: 1px solid rgba(250,204,21,0.22); }
+      .tag-javascript { background: rgba(251,191,36,0.14); color: #fcd34d; border: 1px solid rgba(251,191,36,0.22); }
+      .tag-laravel    { background: rgba(248,113,113,0.14); color: #fca5a5; border: 1px solid rgba(248,113,113,0.22); }
+      .tag-react      { background: rgba(56,189,248,0.14); color: #7dd3fc;  border: 1px solid rgba(56,189,248,0.22); }
+      .tag-nodejs     { background: rgba(74,222,128,0.14); color: #86efac;  border: 1px solid rgba(74,222,128,0.22); }
+      .tag-vuejs      { background: rgba(52,211,153,0.14); color: #6ee7b7;  border: 1px solid rgba(52,211,153,0.22); }
+      .tag-mysql      { background: rgba(96,165,250,0.14); color: #93c5fd;  border: 1px solid rgba(96,165,250,0.22); }
+      .tag-flask      { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65); border: 1px solid rgba(255,255,255,0.14); }
+      .tag-alpinejs   { background: rgba(167,139,250,0.18); color: #a78bfa; border: 1px solid rgba(167,139,250,0.28); }
+
+      .card-name {
+        font-size: clamp(0.95rem, 2vw, 1.1rem);
+        font-weight: 700;
+        margin-bottom: 0.4rem;
+        line-height: 1.35;
+        color: var(--text-1);
+      }
+      .card-desc {
+        font-size: clamp(0.78rem, 1.6vw, 0.84rem);
+        color: var(--text-2);
+        line-height: 1.65;
+        flex: 1;
+        margin-bottom: 1rem;
+      }
+      .card-foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 0.9rem;
+        border-top: 1px solid var(--border-sm);
+        margin-top: auto;
+      }
+      .card-year {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--text-4);
+      }
+      .card-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: var(--pink);
+        text-decoration: none;
+        letter-spacing: 0.02em;
+        transition: gap 0.2s, color 0.2s;
+      }
+      .card-cta:hover { gap: 0.6rem; color: var(--pink-light); }
+
+      /* Empty state */
+      .empty {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: clamp(3rem, 8vw, 5rem) 1rem;
+        color: var(--text-3);
+        gap: 0.75rem;
+        text-align: center;
+      }
+      .empty-icon { font-size: 3rem; }
+      .empty h3 { color: var(--text-1); font-size: 1.1rem; }
+
+      /* ══════════════════════════════════
+         EDUCATION
+      ══════════════════════════════════ */
+      .edu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+        gap: clamp(0.85rem, 2vw, 1.25rem);
+      }
+      .edu-card {
+        background: var(--glass-xs);
+        border: 1px solid var(--border-md);
+        border-radius: var(--radius-md);
+        padding: clamp(1.1rem, 2.5vw, 1.5rem);
+        backdrop-filter: blur(18px);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+      .edu-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--purple-400), var(--pink));
+      }
+      .edu-card:hover {
+        background: var(--glass-sm);
+        transform: translateY(-4px);
+        border-color: rgba(232,121,249,0.38);
+        box-shadow: 0 16px 40px rgba(139,92,246,0.18);
+      }
+      .edu-emoji { font-size: clamp(1.6rem, 4vw, 2.1rem); margin-bottom: 0.7rem; display: block; }
+      .edu-degree { font-size: clamp(0.9rem, 2vw, 1rem); font-weight: 700; color: var(--text-1); margin-bottom: 0.25rem; }
+      .edu-major  { font-size: clamp(0.82rem, 1.8vw, 0.88rem); color: var(--purple-300); font-weight: 600; margin-bottom: 0.45rem; }
+      .edu-period { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--text-4); margin-bottom: 0.75rem; }
+      .edu-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 0.2rem 0.6rem;
+        border-radius: 100px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .s-done    { background: rgba(74,222,128,0.14); color: #86efac; border: 1px solid rgba(74,222,128,0.28); }
+      .s-ongoing { background: rgba(232,121,249,0.14); color: var(--pink); border: 1px solid rgba(232,121,249,0.28); }
+
+      /* ══════════════════════════════════
+         SKILLS
+      ══════════════════════════════════ */
+      .skills-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+      .skill-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        background: var(--glass-xs);
+        border: 1px solid var(--border-sm);
+        padding: 0.45rem 0.9rem;
+        border-radius: var(--radius-sm);
+        font-size: clamp(0.76rem, 1.8vw, 0.83rem);
+        font-weight: 600;
+        color: var(--text-2);
+        backdrop-filter: blur(8px);
+        transition: all 0.2s;
+        cursor: default;
+      }
+      .skill-chip:hover {
+        background: rgba(139,92,246,0.18);
+        border-color: rgba(139,92,246,0.38);
+        color: var(--text-1);
+        transform: translateY(-2px);
+      }
+
+      /* ══════════════════════════════════
+         CONTACT
+      ══════════════════════════════════ */
+      .contact-box {
+        background: var(--glass-xs);
+        border: 1px solid var(--border-md);
+        border-radius: var(--radius-xl);
+        padding: clamp(1.75rem, 5vw, 3rem);
+        backdrop-filter: blur(22px);
+        text-align: center;
+        max-width: 640px;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+      }
+      .contact-box::before {
+        content: '';
+        position: absolute;
+        top: -60px; left: 50%; transform: translateX(-50%);
+        width: 300px; height: 150px;
+        background: radial-gradient(ellipse, rgba(232,121,249,0.15) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .contact-big-emoji { font-size: clamp(2rem, 5vw, 3rem); display: block; margin-bottom: 0.75rem; position: relative; z-index: 1; }
+      .contact-heading {
+        font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 0.75rem;
+      }
+      .contact-desc {
+        color: var(--text-2);
+        line-height: 1.72;
+        font-size: clamp(0.85rem, 2vw, 0.95rem);
+        margin-bottom: clamp(1.5rem, 3vw, 2rem);
+        position: relative;
+        z-index: 1;
+        max-width: 440px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .contact-btns {
+        display: flex;
+        gap: 0.65rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.78rem 1.6rem;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: clamp(0.82rem, 2vw, 0.9rem);
+        text-decoration: none;
+        background: linear-gradient(135deg, var(--purple-400), var(--pink));
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 22px rgba(139,92,246,0.42);
+        font-family: 'Outfit', sans-serif;
+        transition: all 0.25s;
+      }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139,92,246,0.52); }
+      .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.78rem 1.4rem;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: clamp(0.82rem, 2vw, 0.9rem);
+        text-decoration: none;
+        background: var(--glass-sm);
+        border: 1px solid var(--border-md);
+        color: var(--text-1);
+        font-family: 'Outfit', sans-serif;
+        transition: all 0.25s;
+      }
+      .btn-ghost:hover { background: var(--glass-md); transform: translateY(-2px); border-color: var(--border-lg); }
+
+      /* ══════════════════════════════════
+         FOOTER
+      ══════════════════════════════════ */
+      footer {
+        border-top: 1px solid var(--border-sm);
+        padding: clamp(1.25rem, 3vw, 1.75rem) 1.25rem;
+        text-align: center;
+        color: var(--text-4);
+        font-family: 'DM Mono', monospace;
+        font-size: 0.75rem;
+      }
+      footer strong { color: var(--text-3); }
+
+      /* ══════════════════════════════════
+         RESPONSIVE BREAKPOINTS
+      ══════════════════════════════════ */
+
+      /* Tablet (≥ 640px) */
+      @media (min-width: 640px) {
+        .filter-bar {
+          flex-direction: row;
+          align-items: flex-start;
+        }
+        .search-wrap { flex: 1; min-width: 200px; }
+        .cat-scroll { flex-wrap: wrap; }
+      }
+
+      /* Desktop (≥ 768px) */
+      @media (min-width: 768px) {
+        .hamburger { display: none !important; }
+        .desktop-nav { display: flex; }
+        .mobile-menu { display: none !important; }
+      }
+
+      /* Mobile only (< 768px) */
+      @media (max-width: 767px) {
+        .desktop-nav { display: none; }
+        .hamburger { display: flex; }
+        .lang-switcher { display: none; } /* shown in mobile menu instead */
+        .hero {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+        .hero-available { margin-left: auto; margin-right: auto; }
+        .hero-roles { justify-content: center; }
+        .hero-desc { margin-left: auto; margin-right: auto; max-width: 100%; text-align: left; }
+        .stat-row { justify-content: center; }
+        .hero-avatar-col { display: none; }
+      }
+
+      /* Small mobile (< 400px) */
+      @media (max-width: 399px) {
+        .header-inner { padding: 0.75rem 1rem; }
+        .logo { font-size: 1rem; }
+        .cat-scroll { gap: 0.3rem; }
+        .cat-btn { padding: 0.4rem 0.75rem; font-size: 0.72rem; }
+      }
+
+      /* Wide desktop (≥ 1024px) */
+      @media (min-width: 1024px) {
+        .port-grid { grid-template-columns: repeat(3, 1fr); }
+        .filter-bar { flex-direction: row; }
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar { width: 5px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.45); border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: rgba(232,121,249,0.5); }
+    </style>
+  </head>
+
+  <body x-data="app()" x-init="init()">
+    <!-- Background -->
+    <div class="orb-layer">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+    </div>
+
+    <div class="page">
+
+      <!-- ══ HEADER ══ -->
+      <header class="site-header">
+        <div class="header-inner">
+          <div class="logo">AslanAsilon</div>
+
+          <!-- Desktop nav -->
+          <nav class="desktop-nav">
+            <a class="nav-a" href="#portfolio" x-text="t('navPortfolio')"></a>
+            <a class="nav-a" href="#education" x-text="t('navEducation')"></a>
+            <a class="nav-a" href="#skills"    x-text="t('navSkills')"></a>
+            <a class="nav-a" href="#contact"   x-text="t('navContact')"></a>
+          </nav>
+
+          <!-- Desktop lang -->
+          <div class="lang-switcher">
+            <button class="lang-btn" :class="{active:lang==='id'}" @click="lang='id'">ID</button>
+            <button class="lang-btn" :class="{active:lang==='en'}" @click="lang='en'">EN</button>
+            <button class="lang-btn" :class="{active:lang==='ja'}" @click="lang='ja'">日本語</button>
+          </div>
+
+          <!-- Hamburger -->
+          <button class="hamburger" :class="{open:mobileOpen}" @click="mobileOpen=!mobileOpen" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+
+        <!-- Mobile drawer -->
+        <div class="mobile-menu" :class="{open:mobileOpen}">
+          <a class="mobile-nav-a" href="#portfolio" @click="mobileOpen=false" x-text="t('navPortfolio')"></a>
+          <a class="mobile-nav-a" href="#education" @click="mobileOpen=false" x-text="t('navEducation')"></a>
+          <a class="mobile-nav-a" href="#skills"    @click="mobileOpen=false" x-text="t('navSkills')"></a>
+          <a class="mobile-nav-a" href="#contact"   @click="mobileOpen=false" x-text="t('navContact')"></a>
+          <div class="mobile-lang-row">
+            <button class="mobile-lang-btn" :class="{active:lang==='id'}" @click="lang='id';mobileOpen=false">🇮🇩 Indonesia</button>
+            <button class="mobile-lang-btn" :class="{active:lang==='en'}" @click="lang='en';mobileOpen=false">🇬🇧 English</button>
+            <button class="mobile-lang-btn" :class="{active:lang==='ja'}" @click="lang='ja';mobileOpen=false">🇯🇵 日本語</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- ══ HERO ══ -->
+      <section class="hero">
+        <div>
+          <div class="hero-available">
+            <div class="blink-dot"></div>
+            <span x-text="t('available')"></span>
+          </div>
+
+          <h1 class="hero-name">
+            <span>Aslan</span>
+            <span class="grad">Asilon</span>
+          </h1>
+
+          <div class="hero-roles">
+            <span class="hero-role-text" x-text="t('role')"></span>
+            <span class="badge">🎓 S1 Sistem Informasi</span>
+            <span class="badge">🇯🇵 D3 Sastra Jepang</span>
+          </div>
+
+          <p class="hero-desc" x-text="t('heroDesc')"></p>
+
+          <div class="stat-row">
+            <div class="stat-card">
+              <span class="stat-n">3+</span>
+              <span class="stat-l" x-text="t('statYears')"></span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-n">20+</span>
+              <span class="stat-l" x-text="t('statProjects')"></span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-n">2</span>
+              <span class="stat-l" x-text="t('statDegrees')"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Avatar (hidden on mobile) -->
+        <div class="hero-avatar-col">
+          <div class="avatar-wrap">
+            <div class="avatar-glow"></div>
+            <div class="avatar-ring">
+              <div class="avatar-ring-inner">
+                <span class="avatar-initials">AA</span>
+              </div>
+            </div>
+          </div>
+          <div class="avatar-badges">
+            <span class="badge">💻 Web Dev</span>
+            <span class="badge">🇯🇵 日本語学生</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ PORTFOLIO ══ -->
+      <section class="section" id="portfolio">
+        <div class="sec-head">
+          <h2 class="sec-title"><span class="ac">// </span><span x-text="t('portfolioTitle')"></span></h2>
+          <div class="sec-line"></div>
+        </div>
+
+        <!-- Filter -->
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input class="search-input" type="text" x-model="search" :placeholder="t('searchPlaceholder')" />
+          </div>
+          <div class="cat-scroll">
+            <button class="cat-btn" :class="{active:activeCat===''}" @click="activeCat=''" x-text="t('all')"></button>
+            <template x-for="c in categories" :key="c">
+              <button class="cat-btn" :class="{active:activeCat===c}" @click="activeCat=c" x-text="c"></button>
+            </template>
+          </div>
+        </div>
+
+        <div class="results-count">
+          <strong x-text="filtered.length"></strong>
+          <span x-text="t('of')"></span>
+          <strong x-text="portfolios.length"></strong>
+          <span x-text="t('projects')"></span>
+        </div>
+
+        <div class="port-grid">
+          <template x-if="filtered.length===0">
+            <div class="empty">
+              <span class="empty-icon">🔮</span>
+              <h3 x-text="t('noResults')"></h3>
+              <p x-text="t('noResultsHint')"></p>
+            </div>
+          </template>
+          <template x-for="(item,i) in filtered" :key="item.id">
+            <div class="port-card" :style="`animation-delay:${i*0.07}s`">
+              <div class="card-thumb" :style="`background:${item.bg}`">
+                <span class="card-thumb-emoji" x-text="item.icon"></span>
+              </div>
+              <div class="card-body">
+                <div class="card-tags">
+                  <template x-for="tg in item.tags" :key="tg">
+                    <span class="tag" :class="`tag-${tg.toLowerCase().replace(/[^a-z]/g,'')}`" x-text="tg"></span>
+                  </template>
+                </div>
+                <div class="card-name" x-text="item.name[lang]||item.name.id"></div>
+                <div class="card-desc" x-text="item.desc[lang]||item.desc.id"></div>
+                <div class="card-foot">
+                  <span class="card-year" x-text="item.year"></span>
+                  <a href="#" class="card-cta"><span x-text="t('view')"></span> →</a>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </section>
+
+      <!-- ══ EDUCATION ══ -->
+      <section class="section" id="education">
+        <div class="sec-head">
+          <h2 class="sec-title"><span class="ac">// </span><span x-text="t('eduTitle')"></span></h2>
+          <div class="sec-line"></div>
+        </div>
+        <div class="edu-grid">
+          <div class="edu-card">
+            <span class="edu-emoji">🏛️</span>
+            <div class="edu-degree" x-text="t('s1Title')"></div>
+            <div class="edu-major" x-text="t('s1Major')"></div>
+            <div class="edu-period">2018 – 2022</div>
+            <div class="edu-status s-done">✓ <span x-text="t('graduated')"></span></div>
+          </div>
+          <div class="edu-card">
+            <span class="edu-emoji">🇯🇵</span>
+            <div class="edu-degree" x-text="t('d3Title')"></div>
+            <div class="edu-major" x-text="t('d3Major')"></div>
+            <div class="edu-period">2025 – <span x-text="t('now')"></span></div>
+            <div class="edu-status s-ongoing">● <span x-text="t('ongoing')"></span></div>
+          </div>
+          <div class="edu-card">
+            <span class="edu-emoji">💡</span>
+            <div class="edu-degree" x-text="t('dualTitle')"></div>
+            <div class="edu-major" x-text="t('dualSub')"></div>
+            <div class="edu-period">Tech × 日本語</div>
+            <div class="edu-status s-ongoing">★ <span x-text="t('unique')"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ SKILLS ══ -->
+      <section class="section" id="skills">
+        <div class="sec-head">
+          <h2 class="sec-title"><span class="ac">// </span><span x-text="t('skillsTitle')"></span></h2>
+          <div class="sec-line"></div>
+        </div>
+        <div class="skills-wrap">
+          <template x-for="s in skills" :key="s.name">
+            <div class="skill-chip">
+              <span x-text="s.icon"></span>
+              <span x-text="s.name"></span>
+            </div>
+          </template>
+        </div>
+      </section>
+
+      <!-- ══ CONTACT ══ -->
+      <section class="section" id="contact">
+        <div class="sec-head">
+          <h2 class="sec-title"><span class="ac">// </span><span x-text="t('contactTitle')"></span></h2>
+          <div class="sec-line"></div>
+        </div>
+        <div class="contact-box">
+          <span class="contact-big-emoji">✨</span>
+          <div class="contact-heading" x-text="t('contactHeading')"></div>
+          <p class="contact-desc" x-text="t('contactDesc')"></p>
+          <div class="contact-btns">
+            <a href="mailto:aslan@example.com" class="btn-primary">✉️ <span x-text="t('sendEmail')"></span></a>
+            <a href="#" class="btn-ghost">🐙 GitHub</a>
+            <a href="#" class="btn-ghost">💼 LinkedIn</a>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        © 2025 <strong>AslanAsilon</strong> — <span x-text="t('footer')"></span>
+      </footer>
+
+    </div><!-- .page -->
+
+    <script>
+    function app() {
+      return {
+        lang: 'id',
+        search: '',
+        activeCat: '',
+        mobileOpen: false,
+
+        categories: ['PHP','Python','JavaScript','Laravel','React','Node.js','Vue.js','Flask'],
+
+        i18n: {
+          id: {
+            available: 'Tersedia untuk Proyek Baru',
+            role: 'Web Developer & Mahasiswa Sastra Jepang',
+            heroDesc: 'Membangun aplikasi web modern yang fungsional dan efisien. Latar belakang S1 Sistem Informasi (2018–2022) dipadukan dengan studi aktif D3 Sastra Jepang (2025–kini) menjadikan saya unik di persimpangan teknologi dan bahasa.',
+            statYears: 'Tahun Coding', statProjects: 'Proyek Web', statDegrees: 'Gelar Studi',
+            navPortfolio: 'Portfolio', navEducation: 'Pendidikan', navSkills: 'Keahlian', navContact: 'Kontak',
+            portfolioTitle: 'Portfolio',
+            searchPlaceholder: 'Cari nama atau teknologi...',
+            all: 'Semua', of: ' dari ', projects: ' proyek', view: 'Lihat →',
+            noResults: 'Tidak ada proyek yang cocok',
+            noResultsHint: 'Coba ubah kata kunci atau pilih kategori lain.',
+            eduTitle: 'Pendidikan',
+            s1Title: 'Sarjana (S1)', s1Major: 'Sistem Informasi',
+            d3Title: 'Diploma (D3)', d3Major: 'Sastra Jepang',
+            dualTitle: 'Kombinasi Unik', dualSub: 'Teknologi + Bahasa Jepang',
+            graduated: 'Lulus', ongoing: 'Sedang Berjalan', now: 'Sekarang', unique: 'Keunggulan Unik',
+            skillsTitle: 'Tech Stack & Keahlian',
+            contactTitle: 'Kontak', contactHeading: 'Mari Berkolaborasi!',
+            contactDesc: 'Punya proyek menarik atau ingin berdiskusi soal web development? Saya siap membantu mewujudkan ide Anda.',
+            sendEmail: 'Kirim Email',
+            footer: 'Dibuat dengan 💜 dari Indonesia untuk dunia.',
+          },
+          en: {
+            available: 'Available for New Projects',
+            role: 'Web Developer & Japanese Literature Student',
+            heroDesc: 'Building modern, functional, and efficient web applications. My S1 in Information Systems (2018–2022) combined with active D3 Japanese Literature studies (2025–present) uniquely positions me at the intersection of technology and language.',
+            statYears: 'Years Coding', statProjects: 'Web Projects', statDegrees: 'Degrees',
+            navPortfolio: 'Portfolio', navEducation: 'Education', navSkills: 'Skills', navContact: 'Contact',
+            portfolioTitle: 'Portfolio',
+            searchPlaceholder: 'Search by name or technology...',
+            all: 'All', of: ' of ', projects: ' projects', view: 'View →',
+            noResults: 'No projects found',
+            noResultsHint: 'Try changing the keyword or selecting another category.',
+            eduTitle: 'Education',
+            s1Title: "Bachelor's Degree (S1)", s1Major: 'Information Systems',
+            d3Title: 'Diploma (D3)', d3Major: 'Japanese Literature',
+            dualTitle: 'Unique Combination', dualSub: 'Technology + Japanese Language',
+            graduated: 'Graduated', ongoing: 'In Progress', now: 'Present', unique: 'Unique Advantage',
+            skillsTitle: 'Tech Stack & Skills',
+            contactTitle: 'Contact', contactHeading: "Let's Collaborate!",
+            contactDesc: "Have an interesting project or want to discuss web development? I'm ready to bring your ideas to life.",
+            sendEmail: 'Send Email',
+            footer: 'Built with 💜 from Indonesia to the world.',
+          },
+          ja: {
+            available: '新プロジェクト受付中',
+            role: 'Webデベロッパー & 日本語文学専攻生',
+            heroDesc: 'モダンで機能的なWebアプリケーションを構築しています。情報システムの学士号（2018〜2022年）と現在進行中の日本語文学の短期大学（2025年〜）を組み合わせた、テクノロジーと言語の交差点にいるユニークな存在です。',
+            statYears: '年のコーディング', statProjects: 'プロジェクト', statDegrees: '専攻',
+            navPortfolio: 'ポートフォリオ', navEducation: '学歴', navSkills: 'スキル', navContact: 'お問い合わせ',
+            portfolioTitle: 'ポートフォリオ',
+            searchPlaceholder: '名前や技術を検索...',
+            all: 'すべて', of: '件中 ', projects: ' 件のプロジェクト', view: '見る →',
+            noResults: 'プロジェクトが見つかりません',
+            noResultsHint: 'キーワードまたはカテゴリを変更してください。',
+            eduTitle: '学歴',
+            s1Title: '学士号（S1）', s1Major: '情報システム',
+            d3Title: '短期大学（D3）', d3Major: '日本語文学',
+            dualTitle: 'ユニークな組み合わせ', dualSub: 'テクノロジー × 日本語',
+            graduated: '卒業', ongoing: '在学中', now: '現在', unique: '独自の強み',
+            skillsTitle: '技術スタック & スキル',
+            contactTitle: 'お問い合わせ', contactHeading: '一緒に作りましょう！',
+            contactDesc: '面白いプロジェクトやWeb開発について話し合いたいですか？あなたのアイデアを実現するお手伝いをします。',
+            sendEmail: 'メールを送る',
+            footer: 'インドネシアから世界へ 💜 で制作。',
+          },
+        },
+
+        portfolios: [
+          { id:1, icon:'🛒', year:'2024',
+            bg:'linear-gradient(135deg,#2d0060 0%,#7c3aed 100%)',
+            tags:['PHP','Laravel','MySQL'],
+            name:{ id:'Platform E-Commerce Multi-Vendor', en:'Multi-Vendor E-Commerce Platform', ja:'マルチベンダーEコマース' },
+            desc:{ id:'Marketplace multi-penjual dengan manajemen produk, pembayaran gateway, sistem review, dan dashboard admin komprehensif.', en:'Multi-seller marketplace with product management, payment gateway, review system, and comprehensive admin dashboard.', ja:'商品管理、決済ゲートウェイ、レビューシステム、管理ダッシュボードを備えたマーケットプレイス。' } },
+          { id:2, icon:'📊', year:'2024',
+            bg:'linear-gradient(135deg,#1a0038 0%,#4f46e5 100%)',
+            tags:['Python','Flask','JavaScript'],
+            name:{ id:'Dashboard Analitik Real-Time', en:'Real-Time Analytics Dashboard', ja:'リアルタイム分析ダッシュボード' },
+            desc:{ id:'Visualisasi data bisnis real-time menggunakan Python Flask dan Chart.js dengan export laporan otomatis.', en:'Real-time business data visualization using Python Flask and Chart.js with automated report export.', ja:'Python FlaskとChart.jsを使用したリアルタイムビジネスデータ可視化と自動レポート。' } },
+          { id:3, icon:'🏥', year:'2023',
+            bg:'linear-gradient(135deg,#1e0040 0%,#6d28d9 100%)',
+            tags:['Laravel','PHP','MySQL'],
+            name:{ id:'Sistem Manajemen Klinik', en:'Clinic Management System', ja:'クリニック管理システム' },
+            desc:{ id:'Aplikasi klinik lengkap: pendaftaran pasien, jadwal dokter, rekam medis elektronik, laporan keuangan otomatis.', en:'Full clinic app: patient registration, doctor scheduling, electronic medical records, automated financial reports.', ja:'患者登録、医師スケジュール、電子医療記録、自動財務レポートを備えたクリニックアプリ。' } },
+          { id:4, icon:'💬', year:'2023',
+            bg:'linear-gradient(135deg,#2e1065 0%,#7c3aed 60%,#a21caf 100%)',
+            tags:['React','Node.js','JavaScript'],
+            name:{ id:'Aplikasi Chat Real-Time', en:'Real-Time Chat Application', ja:'リアルタイムチャットアプリ' },
+            desc:{ id:'Chat berbasis WebSocket dengan ruang obrolan, notifikasi push, enkripsi end-to-end, dan file sharing.', en:'WebSocket-based chat with rooms, push notifications, end-to-end encryption, and file sharing.', ja:'ルーム、プッシュ通知、E2E暗号化、ファイル共有を備えたWebSocketチャット。' } },
+          { id:5, icon:'🎓', year:'2022',
+            bg:'linear-gradient(135deg,#3b0082 0%,#7e22ce 100%)',
+            tags:['Vue.js','PHP','MySQL'],
+            name:{ id:'Platform E-Learning Online', en:'Online E-Learning Platform', ja:'オンラインEラーニング' },
+            desc:{ id:'Platform belajar dengan video kursus, kuis interaktif, sertifikasi digital, dan tracking progress siswa.', en:'Learning platform with video courses, interactive quizzes, digital certification, and student progress tracking.', ja:'ビデオコース、クイズ、デジタル認定、進捗追跡を備えた学習プラットフォーム。' } },
+          { id:6, icon:'🤖', year:'2024',
+            bg:'linear-gradient(135deg,#1e1b4b 0%,#4338ca 100%)',
+            tags:['Python','JavaScript'],
+            name:{ id:'Chatbot AI Customer Service', en:'AI Customer Service Chatbot', ja:'AIカスタマーサービス' },
+            desc:{ id:'Chatbot NLP untuk layanan pelanggan otomatis 24/7 dengan kemampuan belajar dari percakapan.', en:'NLP chatbot for automated 24/7 customer service with conversation learning capabilities.', ja:'会話学習機能付き24時間対応NLPカスタマーサービスチャットボット。' } },
+          { id:7, icon:'📦', year:'2023',
+            bg:'linear-gradient(135deg,#1a0038 0%,#5b21b6 100%)',
+            tags:['Node.js','JavaScript','MySQL'],
+            name:{ id:'Sistem Inventori Gudang', en:'Warehouse Inventory System', ja:'倉庫在庫管理システム' },
+            desc:{ id:'Manajemen stok real-time dengan barcode scanner, laporan otomatis, dan notifikasi stok kritis via WhatsApp.', en:'Real-time stock management with barcode scanner, automated reports, and critical stock WhatsApp alerts.', ja:'バーコードスキャナー、自動レポート、WhatsApp通知付きリアルタイム在庫管理。' } },
+          { id:8, icon:'🇯🇵', year:'2024',
+            bg:'linear-gradient(135deg,#2d0060 0%,#9d174d 100%)',
+            tags:['PHP','JavaScript','MySQL'],
+            name:{ id:'Kamus Bahasa Jepang Interaktif', en:'Interactive Japanese Dictionary', ja:'インタラクティブ日本語辞書' },
+            desc:{ id:'Website kamus Jepang-Indonesia dengan flashcard, JLPT quiz, kanji stroke order, dan audio pengucapan.', en:'Japanese-Indonesian dictionary with flashcards, JLPT quiz, kanji stroke order, and pronunciation audio.', ja:'フラッシュカード、JLPT問題、漢字筆順、発音音声付き日本語・インドネシア語辞書。' } },
+        ],
+
+        skills: [
+          {icon:'🐘',name:'PHP'},{icon:'⚡',name:'JavaScript'},{icon:'🐍',name:'Python'},
+          {icon:'🔴',name:'Laravel'},{icon:'⚛️',name:'React'},{icon:'💚',name:'Vue.js'},
+          {icon:'🟢',name:'Node.js'},{icon:'🌶️',name:'Flask'},{icon:'🐬',name:'MySQL'},
+          {icon:'🍃',name:'MongoDB'},{icon:'🎨',name:'Tailwind CSS'},{icon:'🏔️',name:'Alpine.js'},
+          {icon:'🐳',name:'Docker'},{icon:'☁️',name:'AWS'},{icon:'🔧',name:'REST API'},
+          {icon:'🇯🇵',name:'日本語 (JLPT N4)'},{icon:'📱',name:'Responsive Design'},{icon:'🔀',name:'Git'},
+        ],
+
+        t(k) { return (this.i18n[this.lang]||this.i18n.id)[k]||k; },
+
+        get filtered() {
+          const q = this.search.toLowerCase().trim();
+          return this.portfolios.filter(p => {
+            const names = [p.name.id, p.name.en, p.name.ja].join(' ').toLowerCase();
+            const tags  = p.tags.join(' ').toLowerCase();
+            return (!q || names.includes(q) || tags.includes(q))
+              && (!this.activeCat || p.tags.some(t => t.toLowerCase() === this.activeCat.toLowerCase()));
+          });
+        },
+
+        init() {
+          const l = (navigator.language||'id').toLowerCase();
+          this.lang = l.startsWith('ja') ? 'ja' : l.startsWith('en') ? 'en' : 'id';
+        }
+      }
+    }
+    </script>
+  </body>
+</html>

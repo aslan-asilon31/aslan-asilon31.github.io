@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio | Web Developer</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --card: #16161f;
+        --border: #2a2a3a;
+        --accent: #7fffb2;
+        --accent2: #ff6b6b;
+        --accent3: #6b9fff;
+        --text: #e8e8f0;
+        --muted: #7070a0;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Syne', sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .mono { font-family: 'Space Mono', monospace; }
+
+      /* Animated grid background */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(127,255,178,0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(127,255,178,0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Glow blob */
+      .glow-blob {
+        position: fixed;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(127,255,178,0.06) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+        top: -100px;
+        right: -100px;
+        animation: pulse 8s ease-in-out infinite;
+      }
+      .glow-blob2 {
+        position: fixed;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(107,159,255,0.05) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+        bottom: 0;
+        left: -100px;
+        animation: pulse 10s ease-in-out infinite reverse;
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.6; }
+        50% { transform: scale(1.2); opacity: 1; }
+      }
+
+      .content { position: relative; z-index: 1; }
+
+      /* Header */
+      header {
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(20px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(10, 10, 15, 0.85);
+      }
+
+      .header-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-family: 'Space Mono', monospace;
+        font-size: 1.1rem;
+        color: var(--accent);
+        letter-spacing: -0.02em;
+      }
+      .logo span { color: var(--muted); }
+
+      /* Language switcher */
+      .lang-switcher {
+        display: flex;
+        gap: 0.25rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        padding: 0.25rem;
+      }
+      .lang-btn {
+        padding: 0.3rem 0.75rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        font-family: 'Syne', sans-serif;
+      }
+      .lang-btn.active {
+        background: var(--accent);
+        color: #0a0a0f;
+      }
+      .lang-btn:hover:not(.active) { color: var(--text); }
+
+      /* Hero */
+      .hero {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 5rem 2rem 3rem;
+      }
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--accent);
+        background: rgba(127,255,178,0.08);
+        border: 1px solid rgba(127,255,178,0.2);
+        padding: 0.35rem 0.85rem;
+        border-radius: 100px;
+        margin-bottom: 1.5rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .hero-tag::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+        animation: blink 2s infinite;
+      }
+      @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+      .hero-name {
+        font-size: clamp(3rem, 8vw, 6rem);
+        font-weight: 800;
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+        margin-bottom: 1.5rem;
+      }
+      .hero-name .accent { color: var(--accent); }
+      .hero-name .dim { color: var(--muted); font-weight: 400; }
+
+      .hero-desc {
+        max-width: 520px;
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 1.05rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .hero-stats {
+        display: flex;
+        gap: 2.5rem;
+        flex-wrap: wrap;
+      }
+      .stat-item { text-align: left; }
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--accent);
+        display: block;
+        line-height: 1;
+        font-family: 'Space Mono', monospace;
+      }
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 0.25rem;
+      }
+
+      /* Section */
+      .section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 2rem 4rem;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .section-title span { color: var(--accent); }
+
+      /* Search & Filter */
+      .filter-bar {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+      }
+
+      .search-wrap {
+        flex: 1;
+        min-width: 200px;
+        position: relative;
+      }
+      .search-wrap svg {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        width: 16px;
+        height: 16px;
+      }
+      .search-input {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 0.75rem 1rem 0.75rem 2.75rem;
+        border-radius: 10px;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .search-input::placeholder { color: var(--muted); }
+      .search-input:focus { border-color: var(--accent); }
+
+      .cat-filters {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .cat-btn {
+        padding: 0.6rem 1.1rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--muted);
+        font-family: 'Syne', sans-serif;
+      }
+      .cat-btn:hover { color: var(--text); border-color: var(--muted); }
+      .cat-btn.active {
+        background: var(--accent);
+        color: #0a0a0f;
+        border-color: var(--accent);
+      }
+
+      /* Portfolio Grid */
+      .portfolio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .portfolio-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        animation: fadeUp 0.4s ease both;
+      }
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .portfolio-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 60px rgba(127,255,178,0.08), 0 0 0 1px rgba(127,255,178,0.1);
+      }
+
+      .card-thumb {
+        width: 100%;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card-body {
+        padding: 1.4rem;
+      }
+
+      .card-tags {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.85rem;
+      }
+      .card-tag {
+        font-family: 'Space Mono', monospace;
+        font-size: 0.65rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 4px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .tag-php { background: rgba(119,123,247,0.15); color: #9b9fff; border: 1px solid rgba(119,123,247,0.2); }
+      .tag-python { background: rgba(255,212,59,0.12); color: #ffd43b; border: 1px solid rgba(255,212,59,0.2); }
+      .tag-javascript { background: rgba(247,223,30,0.12); color: #f7df1e; border: 1px solid rgba(247,223,30,0.2); }
+      .tag-laravel { background: rgba(255,75,75,0.12); color: #ff4b4b; border: 1px solid rgba(255,75,75,0.2); }
+      .tag-react { background: rgba(97,218,251,0.12); color: #61dafb; border: 1px solid rgba(97,218,251,0.2); }
+      .tag-nodejs { background: rgba(104,159,56,0.15); color: #7cb342; border: 1px solid rgba(104,159,56,0.2); }
+      .tag-vuejs { background: rgba(65,184,131,0.12); color: #41b883; border: 1px solid rgba(65,184,131,0.2); }
+      .tag-mysql { background: rgba(0,150,255,0.12); color: #4db8ff; border: 1px solid rgba(0,150,255,0.2); }
+
+      .card-name {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+      }
+      .card-desc {
+        font-size: 0.85rem;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-bottom: 1.1rem;
+      }
+
+      .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .card-year {
+        font-family: 'Space Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--muted);
+      }
+
+      .card-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--accent);
+        text-decoration: none;
+        letter-spacing: 0.03em;
+        transition: gap 0.2s;
+      }
+      .card-link:hover { gap: 0.6rem; }
+
+      /* Empty state */
+      .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        color: var(--muted);
+        grid-column: 1/-1;
+      }
+      .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+      .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+      }
+
+      /* Results count */
+      .results-count {
+        font-family: 'Space Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-bottom: 1.5rem;
+      }
+      .results-count strong { color: var(--accent); }
+
+      /* Skills section */
+      .skills-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 1.5rem;
+      }
+      .skill-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 0.55rem 1rem;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        transition: border-color 0.2s;
+      }
+      .skill-pill:hover { border-color: var(--accent); }
+
+      /* Contact */
+      .contact-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      .contact-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: 1px solid var(--border);
+        color: var(--text);
+        background: var(--surface);
+      }
+      .contact-link:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .contact-link.primary {
+        background: var(--accent);
+        color: #0a0a0f;
+        border-color: var(--accent);
+      }
+      .contact-link.primary:hover {
+        background: #5deea0;
+        color: #0a0a0f;
+      }
+
+      /* Footer */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 2rem;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-family: 'Space Mono', monospace;
+      }
+
+      @media (max-width: 640px) {
+        .header-inner { padding: 1rem; }
+        .hero { padding: 3rem 1rem 2rem; }
+        .section { padding: 1rem 1rem 3rem; }
+        .portfolio-grid { grid-template-columns: 1fr; }
+        .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      }
+    </style>
+  </head>
+  <body x-data="portfolioApp()" x-init="init()">
+
+    <div class="glow-blob"></div>
+    <div class="glow-blob2"></div>
+
+    <div class="content">
+
+      <!-- Header -->
+      <header>
+        <div class="header-inner">
+          <div class="logo mono">
+            <span>&lt;</span>dev<span>/&gt;</span>
+          </div>
+          <div class="lang-switcher">
+            <button class="lang-btn" :class="{ active: lang === 'id' }" @click="lang = 'id'">ID</button>
+            <button class="lang-btn" :class="{ active: lang === 'en' }" @click="lang = 'en'">EN</button>
+            <button class="lang-btn" :class="{ active: lang === 'ja' }" @click="lang = 'ja'">日本語</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-tag" x-text="t('available')"></div>
+        <h1 class="hero-name">
+          Rizky<br>
+          <span class="accent">Pratama</span><br>
+          <span class="dim" x-text="t('role')"></span>
+        </h1>
+        <p class="hero-desc" x-text="t('heroDesc')"></p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">5+</span>
+            <span class="stat-label" x-text="t('years')"></span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">42</span>
+            <span class="stat-label" x-text="t('projects')"></span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">18</span>
+            <span class="stat-label" x-text="t('clients')"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Portfolio -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title"><span>//</span> <span x-text="t('portfolioTitle')"></span></h2>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              class="search-input"
+              type="text"
+              x-model="search"
+              :placeholder="t('searchPlaceholder')"
+            />
+          </div>
+          <div class="cat-filters">
+            <button
+              class="cat-btn"
+              :class="{ active: activeCategory === '' }"
+              @click="activeCategory = ''"
+              x-text="t('all')"
+            ></button>
+            <template x-for="cat in categories" :key="cat">
+              <button
+                class="cat-btn"
+                :class="{ active: activeCategory === cat }"
+                @click="activeCategory = cat"
+                x-text="cat"
+              ></button>
+            </template>
+          </div>
+        </div>
+
+        <!-- Results count -->
+        <div class="results-count">
+          <strong x-text="filteredPortfolios.length"></strong>
+          <span x-text="t('resultsOf')"></span>
+          <strong x-text="portfolios.length"></strong>
+          <span x-text="t('resultsProject')"></span>
+        </div>
+
+        <!-- Grid -->
+        <div class="portfolio-grid">
+          <template x-if="filteredPortfolios.length === 0">
+            <div class="empty-state">
+              <span class="empty-icon">🔍</span>
+              <h3 x-text="t('noResults')"></h3>
+              <p x-text="t('noResultsDesc')"></p>
+            </div>
+          </template>
+          <template x-for="(item, i) in filteredPortfolios" :key="item.id">
+            <div
+              class="portfolio-card"
+              :style="`animation-delay: ${i * 0.05}s`"
+            >
+              <div class="card-thumb" :style="`background: ${item.bg}`">
+                <span x-text="item.icon" style="filter: drop-shadow(0 4px 20px rgba(0,0,0,0.4))"></span>
+              </div>
+              <div class="card-body">
+                <div class="card-tags">
+                  <template x-for="tag in item.tags" :key="tag">
+                    <span class="card-tag" :class="`tag-${tag.toLowerCase().replace('.','').replace(' ','')}`" x-text="tag"></span>
+                  </template>
+                </div>
+                <div class="card-name" x-text="item.name[lang] || item.name['id']"></div>
+                <div class="card-desc" x-text="item.desc[lang] || item.desc['id']"></div>
+                <div class="card-footer">
+                  <span class="card-year mono" x-text="item.year"></span>
+                  <a href="#" class="card-link">
+                    <span x-text="t('viewProject')"></span>
+                    <span>→</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section class="section" style="padding-top:0">
+        <div class="section-header">
+          <h2 class="section-title"><span>//</span> <span x-text="t('skillsTitle')"></span></h2>
+        </div>
+        <div class="skills-grid">
+          <template x-for="skill in skills" :key="skill.name">
+            <div class="skill-pill">
+              <span x-text="skill.icon"></span>
+              <span x-text="skill.name"></span>
+            </div>
+          </template>
+        </div>
+      </section>
+
+      <!-- Contact -->
+      <section class="section" style="padding-top:0; padding-bottom:5rem">
+        <div class="section-header">
+          <h2 class="section-title"><span>//</span> <span x-text="t('contactTitle')"></span></h2>
+        </div>
+        <p style="color:var(--muted); max-width:480px; line-height:1.7" x-text="t('contactDesc')"></p>
+        <div class="contact-row">
+          <a href="mailto:rizky@example.com" class="contact-link primary">
+            ✉️ <span x-text="t('contactEmail')"></span>
+          </a>
+          <a href="#" class="contact-link">🐙 GitHub</a>
+          <a href="#" class="contact-link">💼 LinkedIn</a>
+        </div>
+      </section>
+
+      <footer>
+        <span class="mono" x-text="t('footer')"></span>
+      </footer>
+
+    </div><!-- .content -->
+
+    <script>
+      function portfolioApp() {
+        return {
+          lang: 'id',
+          search: '',
+          activeCategory: '',
+
+          translations: {
+            id: {
+              available: '● Tersedia untuk Proyek',
+              role: 'Web Developer.',
+              heroDesc: 'Saya membangun aplikasi web yang cepat, skalabel, dan elegan. Spesialis backend & frontend dengan pengalaman 5+ tahun di ekosistem PHP, Python, dan JavaScript.',
+              years: 'Tahun Pengalaman',
+              projects: 'Proyek Selesai',
+              clients: 'Klien Puas',
+              portfolioTitle: 'Portfolio',
+              searchPlaceholder: 'Cari proyek...',
+              all: 'Semua',
+              viewProject: 'Lihat Proyek',
+              noResults: 'Tidak ada proyek ditemukan',
+              noResultsDesc: 'Coba ubah kata kunci atau filter kategori.',
+              resultsOf: ' dari ',
+              resultsProject: ' proyek',
+              skillsTitle: 'Tech Stack',
+              contactTitle: 'Kontak',
+              contactDesc: 'Ada proyek menarik? Mari berdiskusi dan wujudkan ide Anda bersama saya.',
+              contactEmail: 'Kirim Email',
+              footer: '© 2025 Rizky Pratama — Dibuat dengan ❤️ dan banyak kopi.',
+            },
+            en: {
+              available: '● Available for Projects',
+              role: 'Web Developer.',
+              heroDesc: 'I build fast, scalable, and elegant web applications. Backend & frontend specialist with 5+ years in PHP, Python, and JavaScript ecosystems.',
+              years: 'Years Experience',
+              projects: 'Projects Done',
+              clients: 'Happy Clients',
+              portfolioTitle: 'Portfolio',
+              searchPlaceholder: 'Search projects...',
+              all: 'All',
+              viewProject: 'View Project',
+              noResults: 'No projects found',
+              noResultsDesc: 'Try changing the search keyword or category filter.',
+              resultsOf: ' of ',
+              resultsProject: ' projects',
+              skillsTitle: 'Tech Stack',
+              contactTitle: 'Contact',
+              contactDesc: 'Have an interesting project? Let\'s discuss and bring your ideas to life.',
+              contactEmail: 'Send Email',
+              footer: '© 2025 Rizky Pratama — Built with ❤️ and lots of coffee.',
+            },
+            ja: {
+              available: '● プロジェクト受付中',
+              role: 'Webデベロッパー。',
+              heroDesc: '高速でスケーラブルかつエレガントなWebアプリケーションを構築します。PHP、Python、JavaScriptエコシステムで5年以上の経験を持つバックエンド＆フロントエンドスペシャリスト。',
+              years: '年の経験',
+              projects: '完了プロジェクト',
+              clients: '満足クライアント',
+              portfolioTitle: 'ポートフォリオ',
+              searchPlaceholder: 'プロジェクトを検索...',
+              all: '全て',
+              viewProject: 'プロジェクトを見る',
+              noResults: 'プロジェクトが見つかりません',
+              noResultsDesc: 'キーワードまたはカテゴリフィルターを変更してください。',
+              resultsOf: '件中 ',
+              resultsProject: ' 件のプロジェクト',
+              skillsTitle: '技術スタック',
+              contactTitle: 'お問い合わせ',
+              contactDesc: '面白いプロジェクトはありますか？一緒にアイデアを実現しましょう。',
+              contactEmail: 'メールを送る',
+              footer: '© 2025 Rizky Pratama — ❤️ とたくさんのコーヒーで制作。',
+            },
+          },
+
+          categories: ['PHP', 'Python', 'JavaScript', 'Laravel', 'React', 'Node.js', 'Vue.js'],
+
+          portfolios: [
+            {
+              id: 1,
+              icon: '🛒',
+              bg: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+              year: '2024',
+              tags: ['PHP', 'Laravel', 'MySQL'],
+              name: {
+                id: 'Platform E-Commerce Toko Online',
+                en: 'E-Commerce Online Store Platform',
+                ja: 'オンラインショップEコマースプラットフォーム',
+              },
+              desc: {
+                id: 'Sistem belanja online lengkap dengan manajemen produk, keranjang belanja, pembayaran gateway, dan dashboard admin.',
+                en: 'Full-featured online shopping system with product management, cart, payment gateway, and admin dashboard.',
+                ja: '商品管理、カート、決済ゲートウェイ、管理ダッシュボードを備えた完全なオンラインショッピングシステム。',
+              },
+            },
+            {
+              id: 2,
+              icon: '📊',
+              bg: 'linear-gradient(135deg, #0f2027 0%, #203a43 100%)',
+              year: '2024',
+              tags: ['Python', 'JavaScript'],
+              name: {
+                id: 'Dashboard Analitik Data Real-Time',
+                en: 'Real-Time Data Analytics Dashboard',
+                ja: 'リアルタイムデータ分析ダッシュボード',
+              },
+              desc: {
+                id: 'Visualisasi data real-time menggunakan Python Flask backend dan Chart.js frontend untuk monitoring bisnis.',
+                en: 'Real-time data visualization using Python Flask backend and Chart.js frontend for business monitoring.',
+                ja: 'ビジネスモニタリング向けPython Flaskバックエンドとチャートフロントエンドを使用したリアルタイムデータ可視化。',
+              },
+            },
+            {
+              id: 3,
+              icon: '🏥',
+              bg: 'linear-gradient(135deg, #1a3a1a 0%, #0d2b0d 100%)',
+              year: '2023',
+              tags: ['Laravel', 'PHP', 'MySQL'],
+              name: {
+                id: 'Sistem Manajemen Klinik',
+                en: 'Clinic Management System',
+                ja: 'クリニック管理システム',
+              },
+              desc: {
+                id: 'Aplikasi manajemen klinik dengan fitur pendaftaran pasien, jadwal dokter, rekam medis, dan laporan keuangan.',
+                en: 'Clinic management app with patient registration, doctor scheduling, medical records, and financial reports.',
+                ja: '患者登録、医師スケジュール、医療記録、財務報告書を備えたクリニック管理アプリ。',
+              },
+            },
+            {
+              id: 4,
+              icon: '💬',
+              bg: 'linear-gradient(135deg, #1c0a2e 0%, #2d1b69 50%, #11998e 100%)',
+              year: '2023',
+              tags: ['React', 'Node.js', 'JavaScript'],
+              name: {
+                id: 'Aplikasi Chat Real-Time',
+                en: 'Real-Time Chat Application',
+                ja: 'リアルタイムチャットアプリケーション',
+              },
+              desc: {
+                id: 'Aplikasi chat berbasis WebSocket dengan fitur ruang obrolan, notifikasi, dan enkripsi pesan end-to-end.',
+                en: 'WebSocket-based chat app with chat rooms, notifications, and end-to-end message encryption.',
+                ja: 'チャットルーム、通知、エンドツーエンドメッセージ暗号化を備えたWebSocketベースのチャットアプリ。',
+              },
+            },
+            {
+              id: 5,
+              icon: '🤖',
+              bg: 'linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 100%)',
+              year: '2024',
+              tags: ['Python', 'JavaScript'],
+              name: {
+                id: 'Chatbot AI untuk Customer Service',
+                en: 'AI Chatbot for Customer Service',
+                ja: 'カスタマーサービス用AIチャットボット',
+              },
+              desc: {
+                id: 'Chatbot cerdas berbasis NLP untuk layanan pelanggan otomatis dengan integrasi API dan dashboard pelatihan model.',
+                en: 'NLP-based smart chatbot for automated customer service with API integration and model training dashboard.',
+                ja: 'API統合とモデルトレーニングダッシュボードを備えた自動カスタマーサービス向けNLPベースのスマートチャットボット。',
+              },
+            },
+            {
+              id: 6,
+              icon: '🎓',
+              bg: 'linear-gradient(135deg, #1a1000 0%, #2d1f00 100%)',
+              year: '2022',
+              tags: ['Vue.js', 'PHP', 'MySQL'],
+              name: {
+                id: 'Platform E-Learning Online',
+                en: 'Online E-Learning Platform',
+                ja: 'オンラインEラーニングプラットフォーム',
+              },
+              desc: {
+                id: 'Platform belajar online dengan sistem kursus video, kuis interaktif, sertifikasi, dan progress tracking siswa.',
+                en: 'Online learning platform with video course system, interactive quizzes, certification, and student progress tracking.',
+                ja: 'ビデオコースシステム、インタラクティブクイズ、認定、学生進捗追跡を備えたオンライン学習プラットフォーム。',
+              },
+            },
+            {
+              id: 7,
+              icon: '📦',
+              bg: 'linear-gradient(135deg, #001a2e 0%, #003d5c 100%)',
+              year: '2023',
+              tags: ['Node.js', 'JavaScript', 'MySQL'],
+              name: {
+                id: 'Sistem Inventori & Gudang',
+                en: 'Inventory & Warehouse System',
+                ja: '在庫・倉庫管理システム',
+              },
+              desc: {
+                id: 'Manajemen stok gudang real-time dengan barcode scanner, laporan otomatis, dan notifikasi stok kritis.',
+                en: 'Real-time warehouse stock management with barcode scanner, automated reports, and critical stock notifications.',
+                ja: 'バーコードスキャナー、自動レポート、重要在庫通知を備えたリアルタイム倉庫在庫管理。',
+              },
+            },
+            {
+              id: 8,
+              icon: '🏘️',
+              bg: 'linear-gradient(135deg, #1a0f0a 0%, #2e1a0a 100%)',
+              year: '2022',
+              tags: ['Laravel', 'PHP', 'JavaScript'],
+              name: {
+                id: 'Portal Properti & Real Estate',
+                en: 'Property & Real Estate Portal',
+                ja: '不動産ポータルサイト',
+              },
+              desc: {
+                id: 'Website properti dengan pencarian lanjutan berbasis peta, virtual tour 360°, CRM agen, dan sistem booking.',
+                en: 'Property website with map-based advanced search, 360° virtual tour, agent CRM, and booking system.',
+                ja: '地図ベースの高度な検索、360°バーチャルツアー、エージェントCRM、予約システムを備えた不動産ウェブサイト。',
+              },
+            },
+          ],
+
+          skills: [
+            { icon: '🐘', name: 'PHP' },
+            { icon: '🐍', name: 'Python' },
+            { icon: '⚡', name: 'JavaScript' },
+            { icon: '🔴', name: 'Laravel' },
+            { icon: '⚛️', name: 'React' },
+            { icon: '💚', name: 'Vue.js' },
+            { icon: '🟢', name: 'Node.js' },
+            { icon: '🐬', name: 'MySQL' },
+            { icon: '🐘', name: 'PostgreSQL' },
+            { icon: '🍃', name: 'MongoDB' },
+            { icon: '🐳', name: 'Docker' },
+            { icon: '☁️', name: 'AWS' },
+            { icon: '🔧', name: 'REST API' },
+            { icon: '📱', name: 'Responsive Design' },
+          ],
+
+          t(key) {
+            return this.translations[this.lang]?.[key] || this.translations['id'][key] || key;
+          },
+
+          get filteredPortfolios() {
+            const q = this.search.toLowerCase().trim();
+            return this.portfolios.filter(item => {
+              const nameId = (item.name['id'] || '').toLowerCase();
+              const nameEn = (item.name['en'] || '').toLowerCase();
+              const nameJa = (item.name['ja'] || '').toLowerCase();
+              const tagsStr = item.tags.join(' ').toLowerCase();
+
+              const matchSearch = !q || nameId.includes(q) || nameEn.includes(q) || nameJa.includes(q) || tagsStr.includes(q);
+              const matchCat = !this.activeCategory || item.tags.some(t => t.toLowerCase() === this.activeCategory.toLowerCase());
+
+              return matchSearch && matchCat;
+            });
+          },
+
+          init() {
+            // detect browser language preference
+            const lang = navigator.language || 'id';
+            if (lang.startsWith('ja')) this.lang = 'ja';
+            else if (lang.startsWith('en')) this.lang = 'en';
+            else this.lang = 'id';
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
