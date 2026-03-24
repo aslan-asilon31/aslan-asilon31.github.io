@@ -1402,7 +1402,7 @@
             <div class="port-card" :style="`animation-delay:${i*0.07}s`">
               <div class="card-thumb" :style="`background:${item.bg}`">
                 <img
-                  src="img/1.jpeg"
+                  :src="item.img_cover || 'img/1.jpeg'"
                   class="card-thumb-emoji"
                   style="width: 100%; height: 100%; object-fit: cover"
                 />
@@ -1427,9 +1427,13 @@
                 ></div>
                 <div class="card-foot">
                   <span class="card-year" x-text="item.year"></span>
-                  <a href="#" class="card-cta"
-                    ><span x-text="t('view')"></span> →</a
+                  <a
+                    href="#"
+                    @click.prevent="window.open(item.link, '_blank')"
+                    class="card-cta"
                   >
+                    <span x-text="item.link"></span> →
+                  </a>
                 </div>
               </div>
             </div>
@@ -1664,12 +1668,14 @@
               id: 1,
               icon: "🛒",
               year: "2024",
+              link: "https://sakura-shop.sulaslansetiawan.my.id",
+              img_cover: "img/sakura-shop-banner.png",
               bg: "linear-gradient(135deg,#2d0060 0%,#7c3aed 100%)",
               tags: ["PHP", "Laravel", "MySQL"],
               name: {
-                id: "Platform E-Commerce Multi-Vendor",
-                en: "Multi-Vendor E-Commerce Platform",
-                ja: "マルチベンダーEコマース",
+                id: "Toko Sakura",
+                en: "Sakura Shop",
+                ja: "さくらショップ",
               },
               desc: {
                 id: "Marketplace multi-penjual dengan manajemen produk, pembayaran gateway, sistem review, dan dashboard admin komprehensif.",
@@ -1681,6 +1687,8 @@
               id: 2,
               icon: "📊",
               year: "2024",
+              link: "https://sakura-shop.sulaslansetiawan.my.id",
+              img_cover: "",
               bg: "linear-gradient(135deg,#1a0038 0%,#4f46e5 100%)",
               tags: ["Python", "Flask", "JavaScript"],
               name: {
@@ -1698,6 +1706,8 @@
               id: 3,
               icon: "🏥",
               year: "2023",
+              link: "https://sakura-shop.sulaslansetiawan.my.id",
+              img_cover: "",
               bg: "linear-gradient(135deg,#1e0040 0%,#6d28d9 100%)",
               tags: ["Laravel", "PHP", "MySQL"],
               name: {
@@ -1715,6 +1725,8 @@
               id: 4,
               icon: "💬",
               year: "2023",
+              link: "https://sakura-shop.sulaslansetiawan.my.id",
+              img_cover: "",
               bg: "linear-gradient(135deg,#2e1065 0%,#7c3aed 60%,#a21caf 100%)",
               tags: ["React", "Node.js", "JavaScript"],
               name: {
@@ -1732,6 +1744,8 @@
               id: 5,
               icon: "🎓",
               year: "2022",
+              link: "https://sakura-shop.sulaslansetiawan.my.id",
+              img_cover: "",
               bg: "linear-gradient(135deg,#3b0082 0%,#7e22ce 100%)",
               tags: ["Vue.js", "PHP", "MySQL"],
               name: {
@@ -1749,6 +1763,8 @@
               id: 6,
               icon: "🤖",
               year: "2024",
+              link: "https://sakura-shop.sulaslansetiawan.my.id",
+              img_cover: "",
               bg: "linear-gradient(135deg,#1e1b4b 0%,#4338ca 100%)",
               tags: ["Python", "JavaScript"],
               name: {
@@ -1766,6 +1782,8 @@
               id: 7,
               icon: "📦",
               year: "2023",
+              link: "https://sakura-shop.sulaslansetiawan.my.id",
+              img_cover: "",
               bg: "linear-gradient(135deg,#1a0038 0%,#5b21b6 100%)",
               tags: ["Node.js", "JavaScript", "MySQL"],
               name: {
@@ -1783,6 +1801,8 @@
               id: 8,
               icon: "🇯🇵",
               year: "2024",
+              link: "https://sakura-shop.sulaslansetiawan.my.id",
+              img_cover: "",
               bg: "linear-gradient(135deg,#2d0060 0%,#9d174d 100%)",
               tags: ["PHP", "JavaScript", "MySQL"],
               name: {
